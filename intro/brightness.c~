@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <pnmrdr.h>
+
+extern void compute_brightness(FILE *fp);
+
+int main(int argc, char *argv[])
+{
+        if(argc == 1) {
+                compute_brightness(stdin);
+        } else {
+                for(int i = 1; i < argc; i++) {
+                        FILE *fp = fopen(argv[i], "r");
+
+                        if(fp == NULL) {
+                                fprintf(stderr,
+                                        "Could not open file %s for reading\n",
+                                        argv[i]);
+                        } else {
+                                compute_brightness(fp);
+                                fclose(fp);
+                        }
+                }
+        }
+}
+
+extern void compute_brightness(FILE *fp) {
+
+        Pnmrdr_T image = Pnmrdr_new(fp);
+        
+        Pnmrdr_mapdata map;
+        map = Pnmrdr_data(image);
+        
+        int sum = 0;
+        int totalPixels = 0;
+        
+        for(unsigned int i = 0; i < (map.width * map.height); i++) {
+                
+                int brightness = Pnmrdr_get(image);
+                sum += brightness;
+                
+                totalPixels++;
+
+        }
+        
+        double average = (double)sum / (totalPixels * map.denominator);
+        
+        printf("%.3f\n", average);
+        
+}

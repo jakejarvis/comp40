@@ -1,0 +1,79 @@
+               COMP 40 Lab: Naming brightness functions
+                             (for pairs)
+
+
+Partner's:
+
+Partner 1:  Name: Jake Jarvis    Login: jjarvi01
+
+Partner 2:  Name: Tam Luong      Login: tluong04
+
+Partner 3:  Name______________    Login ____________ (if any)
+
+
+This file goes with part 8 of the first lab.  The idea is to give you
+some practice thinking about the names of functions.  The problem is a
+simple one, so we're going the software equivalent of shooting a fly
+with an elephant gun, but because the problem is so simple, it makes
+it easy to have a short practice session.
+
+Here is the problem:
+
+  - Suggest three different functions that might be useful in
+    implementing `brightness`.
+
+  - For each function, suggest three possible names.
+
+  - For each function, say which name you think is most appropriate
+    and *why*.
+
+
+
+Function #1:
+
+  Job: Read file input from command line
+
+  Candidate names: read_file, open_file, get_file
+
+  Best name: get_file
+
+  Why the given name is the best: All this function does is take 
+                                  the command line arguments and create
+                                  a file pointer that can be processed
+                                  later.
+
+
+
+
+
+Function #2:
+
+  Job: Iterate through each pixel and add brightness to an integer and 
+       divide that integer by total number of pixels
+
+  Candidate names: process_image, calculate_brightness, iterate_pixels
+
+  Best name: calculate_brightness
+
+  Why the given name is the best: This function will determine the solution
+                                  of this problem, which is finding the 
+                                  brightness of the image.
+
+
+
+
+
+Function #3:
+
+  Job: Print and format result and other additional data
+
+  Candidate names: print_result, display_result, result_format
+
+  Best name: print_result
+
+  Why the given name is the best: This function will give the user an
+                                  intuitive look at the work that this 
+                                  program calculated.
+
+
+

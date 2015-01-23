@@ -1,0 +1,63 @@
+Jake Jarvis (jjarvi01)
+Tam Luong (tluong04)
+
+COMP 40
+Homework 1 Part B Design
+January 20, 2015
+
+---------------------------------------
+
+To achieve the final result of names printed in groups according to matching
+fingerprints, we will split the program into three easier tasks. First, we will
+parse through the text input we receive, splitting each line into a fingerprint
+and a name. Then, we will store all the fingerprints in a hash table, in which 
+each cell points to a list of name strings. Finally, we will iterate through 
+the hash table and print the names in groups according to fingerprint separated
+by a blank line.
+
+There will be a table of unique fingerprint hashes. Each hash will point to a 
+list of atoms, each of which will store a name. The first atom in the list will
+be the fingerprint string. This is so we can handle cases where to different 
+fingerprints are hashed to the same value.
+
+The invariant throughout the program is that each fingerprint has a unique 
+hash.
+
+---------------------------------------
+
+A. READ INPUT FROM STREAM
+
+ 1. Iterate through each line of input:
+    - Read up until the first whitespace and use that as fingerprint.
+    - The rest of the line is the name.
+ 2. Check for bad input:
+    - If the line is missing a name, throw an error with stderr and continue.
+    - If the fingerprint is more than 512 characters, throw an error with 
+      stderr and continue.
+    - If the name is more than 512 characters, throw a warning message and 
+      truncate the name. 
+
+B. STORE FINGERPRINTS AND NAMES IN A TABLE
+
+ 1. Create a table of pointers to atom lists that will serve as a collection
+    of unique fingerprints.
+ 2. For each line of input, hash the fingerprint.
+ 3. Check if the hash is already in the table.
+     - If the hash is not yet in the table:
+          - Add the hash to the table and point to an atom containing the 
+            fingerprint.
+          - Prepend the name to the new list after the first atom.
+     - If the hash is in the table:
+          - Check if the fingerprint is equal to the string contained in the 
+            first atom that the hash is pointed to.
+              - If it's the same, append the name to the list that the hash 
+                is pointed to.
+              - If it's different, re-hash the fingerprint and repeat Step 3.
+
+C. PRINT GROUPS OF NAMES BY FINGERPRINT
+
+ 1. Iterate through hash table.
+ 2. For each hash, iterate through the list of atoms and print the value of 
+    each atom in the list with a newline at the end, ignoring the first atom 
+    (which is the fingerprint).
+ 3. After the entire list is printed, print another newline.
