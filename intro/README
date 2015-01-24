@@ -1,0 +1,167 @@
+Jake Jarvis (jjarvi01)
+Tam Luong   (tluong04)
+
+COMP 40 Homework 1
+1/23/15
+
+                         -------------------------
+                         |        PART A         |
+                         -------------------------
+
+                            === INTERFACES ===
+
+1. compute_brightness(FILE *fp) – Iterates through the pixels of a graymap
+                                  image and calculates the average brightness.
+
+2. check_validity(FILE *fp) - Checks whether or not the input is a valid 
+                              grayscale image and if not, it prints an error
+                              and terminates the program.
+
+
+                   === ARCHITECTURE & IMPLEMENTATION ===
+
+The main function processes the file – either the data from stdin or using the
+filename in the first (and only) argument. It then passes either file pointer
+to our compute_brightness() function which does all of the brightness work. It
+iterates through each pixel of the image and adds the pixel's brightness to a
+single int variable. After each pixel has been touched, we divide the sum by
+the total number of pixels multiplied by the denominator of the brightness 
+values. We then print that result to the third decimal place.
+
+
+                            === TEST CASES ===
+
+1. Should work: One PGM file name passed as first and only argument.
+                        > ./brightness coins.pgm
+2. Should work: Data from file piped in as stdin with no arguments.
+                        > pngtopnm cellar.png | ./brightness
+                        > djpeg -grayscale ex_bear.jpg | ./brightness
+3. Should throw error: Filename in argument doesn't exist.
+4. Should throw error: File given isn't a grayscale image in PGM format.
+5. Should throw error: stdin data given isn't a grayscale image.
+6. Should throw error: More than one argument is given.
+
+NOTE: See comments above check_validity() in the code. We had trouble catching
+      the Pnmrdr_Badformat exception. 
+
+
+                            === INVARIANTS ===
+
+- We only process one file at a time.
+- The brightness of a pixel is always between 0.0 and 1.0.
+
+
+                         -------------------------
+                         |        PART B         |
+                         -------------------------
+
+                            === INTERFACES ===
+
+1. print_group(cont void *key, void **value, void *cl) - A function required by
+        the Table_map function. This is called for every fingerprint and used
+        to iterate through the list associated with the fingerprint. It uses
+        List_map which in turn calls print_name.
+
+2. print_name(void **x, void *cl) - A function required by the List_map 
+        function. This function simply receives an element of the list above
+        and prints the string contained with a newline afterwards.
+
+
+                    === ARCHITECTURE & IMPLEMENTATION ===
+
+We begin by receiving data piped in from a file through the command line. This
+file should contain fingerprints and names separated by whitespace. We read the
+input line-by-line using fgets() and a buffer array with a maximum size of 2048 
+characters. First, we sanitize the input by checking if the line begins with 
+whitespace, if the line is too long for the buffer to handle, or if the names 
+contain only whitespace. If any of these are true, we show a warning or an 
+error and continue. Then, we separate the line into a fingerprint and name by
+locating the whitespace, trimming the whitespace, and storing them in separate
+strings. Finally, we use a Table to store the fingerprint hashes and 
+corresponding lists that contain the names. We retrieve the existing List 
+stored in the Table for the fingerprint we're looking at, push the new name 
+onto the List, and store it back into the table. After we're done iterating 
+through every line, we output the names in groups by fingerprint (if the 
+fingerprint has more than one name). 
+
+
+
+                            === TEST CASES ===
+
+1. Should work: A name and a fingerprint separated by one or more spaces.
+2. Should work: A name and a fingerprint separated by one or more tabs.
+3. Should work: A name and a fingerprint separated by both tabs and spaces.
+4. Should work: A name and a fingerprint, where the name is followed by 
+                whitespace (tabs and/or spaces).
+5. Should work: A line with no characters will be skipped.
+6. Should work: A line with just whitespace will be skipped.
+7. Should throw warning: A line longer than 2048 characters. Print a warning 
+                         and truncate the line/name.
+8. Should throw error: A line with whitespace as its first character.
+9. Should throw error: A line with only one element (aka just characters not 
+                       separated by whitespace). 
+
+
+                            === INVARIANTS ===
+
+- After sanitization, every line will contain a newline character (\n).
+- After sanitization, every line will be less than 2048 characters. 
+- After sanitization, there will be no whitespace before or after a name.
+
+                         -------------------------
+                         |        PART C         |
+                         -------------------------
+
+                      === EXAMPLES USES OF PART B ===
+
+1. Name and grades in a class: At the beginning of the semester, each student 
+   would be stored as a fingerprint. Then, as the semester progresses, it would
+   be quick to add a new grade for an assignment under a student's name aka
+   fingerprint.
+
+2. Incoming emails into existing threads, or incoming text messages: Once the 
+   first email in a thread is established, adding new replies under the 
+   original message would be easy if each thread was assigned a fingerprint. 
+   Similarly, in a smartphone, if each contact had a fingerprint in the SMS 
+   app, incoming messages could quickly be associated with that contact's 
+   thread. 
+
+3. Putting events into days on a calendar: If each date was assigned a 
+   fingerprint, adding multiple events to that day would be simple. This would 
+   also help something like Siri find a date instantly without the user 
+   searching though the calendar themselves visually to find the day.
+
+4. Multiple phone numbers/email addresses for one contact in a phone: Names and
+   phone numbers in a Contacts app are not one-to-one. People often store 
+   multiple phone numbers as well as email addresses and mailing addresses, 
+   screennames, etc. under one contact. This program would make adding and 
+   retrieving these entries much friendlier.
+
+5. Inventory in a stockroom: This program would assist stockrooms where there
+   are multiple of each item or model but with different serial numbers. These
+   could include laptops, cell phones, cars, money, etc. For example, all 
+   2.2Ghz 13-inch Macbook Pros could have different serial numbers but all be 
+   stored under and retrieved through the same fingerprint.
+
+6. A library: Many libraries still use the Dewey Decimal System, where multiple
+   books are stored under a universally-accepted category represented by a 
+   decimal number, which would be the fingerprint in our program. All computer 
+   science books would be stored under 004, for example.
+
+7. Students registering for classes: Course registration is often a time where 
+   extremely high volumes of traffic are directed at servers, and unlike SIS, 
+   the program needs to quickly and efficiently keep queues/rosters/waitlists 
+   of students corresponding to hundreds of different classes. Instead of 
+   iterating through the entire course library to add a student to a course, 
+   each course could have a fingerprint and adding a student to its 
+   corresponding list would be much faster.
+
+8. Assigning tasks to team members: In a collaborative work environment, 
+   projects are often broken up in into smaller tasks and divided amongst team 
+   members. Each team member would have a fingerprint and each task would be an
+   element stored under that member.
+
+9. Tax codes of items in a store: At the register, the system must look up how
+   much to tax for each item – some items, like food, don't have taxes at all. 
+   This program could organize items by tax code for quick and efficient lookup
+   in the checkout line.
