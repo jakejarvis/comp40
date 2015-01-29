@@ -1,0 +1,246 @@
+Jake Jarvis (jjarvi01)
+Tam Luong   (tluong04)
+
+COMP 40
+Homework 2 Design
+January 28, 2015
+
+
+
+/**************************************
+ *                                    *
+ *              UArray2               *
+ *                                    *
+ **************************************/
+
+
+
+1. What is the abstract thing you are trying to represent?
+
+A two-dimensional array of objects. The objects are accessed through their 
+location in the array determined by the column (x) and row (y). They are
+all the same size. 
+
+
+
+2. What functions will you offer, and what are the contracts of that those 
+   functions must meet?
+
+UArray2_new(int width, int height, int size)
+ - Creates a new UArray2 of given number of columns (width) and rows (height).
+   Each element must be the given number of bites (size).
+
+UArray2_free(T *uarray2)
+ - Frees the memory used by the given UArray2.
+
+UArray2_width(T uarray2)
+ - Returns the number of columns of the UArray2.
+
+UArray2_height(T uarray2)
+ - Returns the number of rows of the UArray2.
+
+UArray2_size(T uarray2)
+  - Returns the number of bites used by each object in the UArray2.
+
+UArray2_at(T uarray2, int i, int j)
+  - Returns a pointer to the object in the position i (column) and j (row).
+
+UArray2_map_row_major(T uarray2, 
+                     void apply(int i, int j, UArray2_T a, void *p1, void *p2),
+                     void *p)
+ - Calls the apply function for each element in the array, iterating row-by-row
+   going horizontally through the columns before moving on to the next row.
+   User can pass an application-specific pointer (p).
+
+UArray2_map_col_major(T uarray2, 
+                     void apply(int i, int j, UArray2_T a, void *p1, void *p2),
+                     void *p)
+ - Calls the apply function for each element in the array, iterating column-by-
+   column going vertically through the rows before moving on to the next 
+   column. User can pass an application-specific pointer (p).
+
+
+
+3. What examples do you have of what the functions are supposed to do?
+
+// Create, fill, and access new array:
+
+int main() 
+{
+        // initializes a 2x2 UArray2 of integers
+        UArray2 array = UArray2_new(2, 2, sizeof(int));
+        for(int i = 0; i < 2; i++) {
+                for(int j = 0; j < 2; j++) {
+                        *UArray_at(array, i, j) = (i + j); 
+                        // fills array with 0, 1, 1, 2
+                }
+        }
+
+        // prints each int in array row-by-row
+        UArray2_map_row_major(array, print_array, NULL);
+
+}
+
+void print_array(int i, int j, UArray2_T a, void *p1, void *p2)
+{
+        printf("The int at %i, %i is %i", i, j, *UArray2_at(a, i, j));
+}
+
+
+
+4. What representation will you use, and what invariants will it satisfy?
+
+The UArray2 will be a UArray of UArrays. The invariants are:
+
+        - Objects stored in the UArray2 will always be the size given when 
+          UArray2_new was called.
+        - When UArray2_map_row_major() or UArray2_map_col_major() is called,
+          the objects in the UArray2 will not be altered.
+        - Height, width, and size are always more than zero.
+        - Pointer to UArray2 is NULL when the UArray2 is empty.
+
+
+
+5. When a representation satisfies all invariants, what abstract thing from 
+   step 1 does it represent?
+
+        - The NULL pointer represents an empty UArray2.
+        - A UArray2 pointer will point to an outer UArray that contains one or 
+          more UArray that contain the actual objects we want to represent.
+
+
+
+6. What test cases have you devised?
+
+        - Should work: Client gives objects that are the data type and size 
+          that were declared in UArray2_new()
+        - Should work: Client changes or accesses location within the number of
+          rows and columns they declared in UArray2_new()
+        - Should give CRE: Client tries to access row or column greater than 
+          the size of the UArray2
+        - Should give CRE: Client tries to change object inside apply functions
+        - Should give CRE: Client tries to put in object that is not the size 
+          they initially declared when creating the UArray2
+        - Should give CRE: Client tries to put in object that is not the data 
+          type they initially declared when creating the UArray2
+
+
+
+7. What programming idioms will you need?
+
+        - The unboxed array idioms (initializing array elements, storing values
+          into an unboxed array)
+        - void** pointers
+        - Allocating memory
+        - Type abbreviations for structure types
+
+
+
+/**************************************
+ *                                    *
+ *                Bit2                *
+ *                                    *
+ **************************************/
+
+1. What is the abstract thing you are trying to represent?
+
+Bit2 will represent a UArray2 that stores objects of datatype Bit, which either
+equals 0 or 1.
+
+
+
+2. What functions will you offer, and what are the contracts of that those 
+   functions must meet?
+
+Bit2_new(int width, int height)
+ - Creates a new Bit2 of given number of columns (width) and rows (height). 
+
+Bit2_put(Bit2 bitmap, int i, int j, Bit value)
+ - Sets the value at location i (row) and j (column) to pointer p.
+
+Bit2_get(Bit2 bitmap, int i, int j)
+ - Retrieves the value stored at location i (row) and j (column).
+
+Bit2_map_row_major(Bit2 bitmap, 
+                        void apply(int i, int j, Bit2_T a, int b, void *p1),
+                        void *p)
+ - Calls the apply function for each element in the Bit2, iterating row-by-row
+   going horizontally through the columns before moving on to the next row.
+   User can pass an application-specific pointer (p).
+
+Bit2_map_col_major(Bit2 bitmap, 
+                        void apply(int i, int j, Bit2_T a, int b, void *p1), 
+                        void *p)
+ - Calls the apply function for each element in the Bit2, iterating column-by-
+   column going vertically through the rows before moving on to the next 
+   column. User can pass an application-specific pointer (p).
+
+
+
+3. What examples do you have of what the functions are supposed to do?
+
+// Creates bitmap, fills it, and prints it:
+
+int main() 
+{
+        // initializes a 2x2 Bit2 bitmap
+        Bit2 bitmap = Bit2_new(2, 2);
+        for(int i = 0; i < 2; i++) {
+                for(int j = 0; j < 2; j++) {
+                        Bit2_put(bitmap, i, j, 1); // makes all 4 bits = 1
+                }
+        }
+
+        // prints each int in array row-by-row
+        Bit2_map_row_major(bitmap, print_bitmap, NULL);
+
+}
+
+void print_array(int i, int j, Bit2_T a, void *p1, void *p2)
+{
+        printf("The bit at %i, %i is %i", i, j, Bit2_get(a, i, j));
+}
+
+
+
+4. What representation will you use, and what invariants will it satisfy?
+
+Bit2 will be represented by a UArray of a UArray of Bits, each of which can 
+either be 0 or 1. The invariants will include:
+
+        - Each Bit in the array can only equal 0 or 1 at all times.
+        - All Bits are the same size.
+        - When Bit2_map_row_major() or Bit2_map_col_major() is called, the
+          objects in the Bit2 bitmap will not be altered.
+
+
+
+5. When a representation satisfies all invariants, what abstract thing from 
+   step 1 does it represent?
+
+        - The NULL pointer represents an empty Bit2 bitmap.
+        - A Bit2 pointer will point to an outer UArray that contains one or
+          more UArray that contains Bits.
+
+
+
+6. What test cases have you devised?
+
+        - Should work: Client gives only objects of Bit datatype
+        - Should work: Client changes or accesses location within the number of
+          rows and columns they declared in Bit2_new()
+        - Should give CRE: Client tries to access row or column greater than
+          the size of the Bit2 bitmap
+        - Should give CRE: Client tries to change Bit inside apply functions
+        - Should give CRE: Client tries to use Bit that is not 0 or 1
+        - Should give CRE: Client tries to store an object in the Bit2 bitmap
+          that is not a Bit
+
+
+
+7. What programming idioms will you need?
+
+        - Using an abstraction defined as an interface
+        - Allocating memory
+        - Handling void* values of known type
+
