@@ -1,8 +1,9 @@
 #include "uarray2.h"
 #include <stdlib.h>
 #include "assert.h"
-#include "mem.h"
 #include "uarray.h"
+#include <uarrayrep.h>
+#include "mem.h"
 
 #define T UArray2_T
 
@@ -40,13 +41,13 @@ T UArray2_new(int width, int height, int size)
         return uarray2;
 }
 
-void UArray2_free(T uarray2)
+void UArray2_free(T *uarray2)
 {
-        for(int i = 0; i < UArray2_height(uarray2); i++) {
-                UArray_free(UArray_at((uarray2->outer), i));
+        for(int i = 0; i < UArray2_height(*uarray2); i++) {
+                UArray_free(UArray_at( ((*uarray2)->outer), i));
         }
 
-        UArray_free(&(uarray2->outer));
+        UArray_free(&((*uarray2)->outer));
 }
 
 int UArray2_width(T uarray2)
@@ -75,7 +76,7 @@ void UArray2_map_row_major(T uarray2,
 {
         for(int i = 0; i < uarray2 -> height; i++) {
                 for (int j = 0; j < uarray2 -> width; j++) {
-                        apply(i, j, uarray2, p, NULL);    // **** TO-DO: P1 AND P1
+                        apply(i, j, uarray2, p, p);    // **** TO-DO: P1 AND P1
                 }
         }
 }
@@ -86,7 +87,9 @@ void UArray2_map_col_major(T uarray2,
 {
         for(int i = 0; i < uarray2 -> width; i++) {
                 for (int j = 0; j < uarray2 -> height; j++) {
-                        apply(i, j, uarray2, p, NULL);    // **** TO-DO: P1 AND P1
+                        apply(i, j, uarray2, p, p);    // **** TO-DO: P1 AND P1
                 }
         }
 }
+
+#undef T
