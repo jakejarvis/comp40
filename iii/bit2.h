@@ -4,7 +4,7 @@
 
 #define T Bit2_T
 typedef struct T *T;
-
+/*
 extern T        Bit2_new    (int width, int height);
 
 extern void     Bit2_free   (T *bitmap);
@@ -20,7 +20,6 @@ extern void     Bit2_map_col_major  (T bitmap,
                            void *p);
 
 Bit2_free
-
+*/
 #undef T
-
 #endif

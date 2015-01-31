@@ -9,10 +9,10 @@
 struct T {
   int height;
   int width;
-  Array2_T array;
+  //Array2_T array;
 };
 
-
+/*
 
 T Bit2_new (int width, int height)
 {
@@ -47,3 +47,6 @@ void Bit2_map_col_major (T bitmap,
 {
         
 }
+*/
+
+#undef T
