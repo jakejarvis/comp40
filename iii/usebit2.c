@@ -20,7 +20,7 @@
 #include <bit2.h>
 
 const int DIM1 = 5;
-const int DIM2 = 9;
+const int DIM2 = 7;
 
 const int MARKER = 1;  /* can only be 1 or 0 */
 
@@ -45,7 +45,7 @@ main(int argc, char *argv[])
         Bit2_T test_array;
         bool OK = true;
 
-     //   int x;
+        int x;
 
         test_array = Bit2_new(DIM1, DIM2);
 
@@ -55,17 +55,17 @@ main(int argc, char *argv[])
 
         /* Note: we are only setting a value on the corner of the array */
         Bit2_put(test_array, DIM1-1, DIM2-1, MARKER);
-    //    OK &= (Bit2_get(test_array, DIM1-1, DIM2-1) == MARKER);
+        OK &= (Bit2_get(test_array, DIM1-1, DIM2-1) == MARKER);
 
-     //   x = Bit2_put(test_array, DIM1-1, DIM2-1, 0);
-    //    OK &= (x == MARKER);     /* hint: put returns previous value */
+        x = Bit2_put(test_array, DIM1-1, DIM2-1, 0);
+        OK &= (x == MARKER);     /* hint: put returns previous value */
 
-     //   Bit2_put(test_array, DIM1-1, DIM2-1, MARKER);  /* for map test */
+        Bit2_put(test_array, DIM1-1, DIM2-1, MARKER);  /* for map test */
         printf("Trying column major\n");
-    //    Bit2_map_col_major(test_array, check_and_print, &OK);
+        Bit2_map_col_major(test_array, check_and_print, &OK);
 
         printf("Trying row major\n");
-    //    Bit2_map_row_major(test_array, check_and_print, &OK);
+        Bit2_map_row_major(test_array, check_and_print, &OK);
 
         Bit2_free(&test_array);
 
