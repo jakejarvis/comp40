@@ -24,17 +24,16 @@ void add_box(UArray2_T array, int *sum);
 
 int main(int argc, char *argv[])
 {
-        if(argc == 1) {    /* no filename, use stdin */
+        if (argc == 1) {    /* no filename, use stdin */
                 solve_puzzle(stdin);
         } else if (argc == 2) {     /* one filename, use it */
                 FILE *fp = fopen(argv[1], "r");
 
-                if(fp == NULL) {
+                if (fp == NULL) {
                         fprintf(stderr,
                                 "ERROR: Could not open file %s for reading.\n",
                                 argv[1]);
                 } else {
-                        // check_validity(fp); /* NOTE BELOW */
                         solve_puzzle(fp);
                         fclose(fp);
                 }
@@ -62,8 +61,8 @@ void solve_puzzle(FILE *fp)
 
         /* iterate through the greymap content and extract the numbers into 
          * a 9x9 UArray2. */
-        for(int i = 0; i < (int)(puzzle.width); i++) {
-                for(int j = 0; j < (int)(puzzle.height); j++) {
+        for (int i = 0; i < (int)(puzzle.width); i++) {
+                for (int j = 0; j < (int)(puzzle.height); j++) {
                         int number = Pnmrdr_get(image);
 
                         int *temp = UArray2_at(array, i, j);
@@ -72,7 +71,7 @@ void solve_puzzle(FILE *fp)
         }
 
         /* done with the file now that all the numbers are in the array */
-        fclose(fp);
+   //     fclose(fp);
 
         /* this will keep tally of the number as we iterate through the row,
          * column, or box. after each, it will reset to zero. if the puzzle is
@@ -84,9 +83,9 @@ void solve_puzzle(FILE *fp)
         add_box(array, sum); /* find sum of each box */
 
         /* clean up memory before exiting */
-        Pnmrdr_free(&image);
-        UArray2_free(&array);
-        FREE(sum);
+     //   Pnmrdr_free(&image);
+     //   UArray2_free(&array);
+     //   FREE(sum);
 
        // UArray_T 
 
@@ -111,8 +110,8 @@ void add_row(int row, int col, UArray2_T array, void *cl, void *sum)
                                                    * row. */
                 if (*sum_temp != 45) {
                     //    FREE(sum);
-                        UArray2_free(&array);
-                        FREE(sum_temp);
+                        //UArray2_free(&array);
+                        //FREE(sum_temp);
                         exit(1);      /* row doesn't add up to 45, puzzle 
                                        * is broken. */
                 } else {
@@ -152,13 +151,13 @@ void add_col(int row, int col, UArray2_T array, void *cl, void *sum)
 
 void add_box(UArray2_T array, int *sum)
 {
-        for(int i = 0; i < 3; i++) {
-                for(int j = 0; j < 3; j++) {    /* this will loop nine times,
-                                                 * one for each box. */
+        for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {    /* this will loop nine times,
+                                                  * one for each box. */
                         *sum = 0; /* reset sum before each box */
 
-                        for(int row = 0; row < 3; row++) {
-                                for(int col = 0; col < 3; col++) {
+                        for (int row = 0; row < 3; row++) {
+                                for (int col = 0; col < 3; col++) {
                                         /* loop within each box row-by-row */
                                         int *number = UArray2_at(array, 
                                                                 (3 * i) + row,
@@ -174,7 +173,7 @@ void add_box(UArray2_T array, int *sum)
                 }
         }
 
-        if(*sum != 45) {
+        if (*sum != 45) {
                 exit(1);   /* box doesn't add up to 45, puzzle is broken. */
         } else {
                 *sum = 0;  /* box is valid, reset the sum for the next 
