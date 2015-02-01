@@ -35,7 +35,7 @@ T UArray2_new(int width, int height, int size)
 
         UArray_T outer = UArray_new(width, sizeof(UArray_T));
 
-        for(int i = 0; i < width; i++) {
+        for (int i = 0; i < width; i++) {
                 UArray_T inner = UArray_new(height, size);
 
                 UArray_T *inner_temp = UArray_at(outer,i);
@@ -56,7 +56,7 @@ T UArray2_new(int width, int height, int size)
 void UArray2_free(T *uarray2)
 {
         UArray_T outer = (*uarray2)->outer;
-        for(int i = 0; i < UArray2_width(*uarray2); i++) {
+        for (int i = 0; i < UArray2_width(*uarray2); i++) {
                 UArray_free(UArray_at(outer, i));
         }
 
@@ -91,7 +91,7 @@ void UArray2_map_row_major(T uarray2,
                                       void *local_cl, void *global_cl),
                            void *global_cl)
 {
-        for(int i = 0; i < uarray2 -> height; i++) {
+        for (int i = 0; i < uarray2 -> height; i++) {
                 for (int j = 0; j < uarray2 -> width; j++) {
                         void *temp = UArray2_at(uarray2, j, i);
                         apply(j, i, uarray2, temp, global_cl);
@@ -104,7 +104,7 @@ void UArray2_map_col_major(T uarray2,
                                       void *local_cl, void *global_cl),
                            void *global_cl)
 {
-        for(int i = 0; i < uarray2 -> width; i++) {
+        for (int i = 0; i < uarray2 -> width; i++) {
                 for (int j = 0; j < uarray2 -> height; j++) {
                         void *temp = UArray2_at(uarray2, i, j);
                         apply(i, j, uarray2, temp, global_cl);
