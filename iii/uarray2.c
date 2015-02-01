@@ -4,6 +4,7 @@
 #include "uarray.h"
 #include <uarrayrep.h>
 #include "mem.h"
+#include <stdio.h>
 
 #define T UArray2_T
 
@@ -23,21 +24,30 @@ T UArray2_new(int width, int height, int size)
         assert(size > 0);
 
 
-        UArray_T outer = UArray_new(height, (width * size));
-
-        UArray2_T uarray2;
-        NEW(uarray2);
-
-        uarray2->width = width;
-        uarray2->height = height;
-        uarray2->size = size;
-        uarray2->outer = outer;
+        UArray_T outer = UArray_new(width, sizeof(UArray_T));
 
         for(int i = 0; i < width; i++) {
-                UArray_T *p = UArray_at(outer, i);
-                *p = UArray_new(width, size);
+	    
+	    UArray_T inner = UArray_new(height, size);
+//	    for (int j = 0; j < width; j++) {
+//		void *temp = UArray_at(inner, j);
+//		temp = NULL;
+//		(void)temp;
+//	    }
+	    UArray_T *inner_temp = UArray_at(outer,i);
+	    *inner_temp = inner;
+//	    printf("hey we successfully initialized row %i\n",i);
+//                *((UArray_T *)UArray_at(outer, i)) = UArray_new(width, size);
         }
 
+    	UArray2_T uarray2;
+    	NEW(uarray2);
+    
+    	uarray2->width = width;
+    	uarray2->height = height;
+    	uarray2->size = size;
+    	uarray2->outer = outer;
+    
         return uarray2;
 }
 
@@ -67,7 +77,9 @@ int UArray2_size(T uarray2)
 
 void* UArray2_at(T uarray2, int i, int j)
 {
-        return UArray_at(UArray_at((uarray2->outer), i), j);
+    UArray_T outer = uarray2->outer;
+    UArray_T *inner_temp = UArray_at(outer,i);
+        return UArray_at(*inner_temp, j);
 }
 
 void UArray2_map_row_major(T uarray2, 
@@ -76,7 +88,9 @@ void UArray2_map_row_major(T uarray2,
 {
         for(int i = 0; i < uarray2 -> height; i++) {
                 for (int j = 0; j < uarray2 -> width; j++) {
-                        apply(i, j, uarray2, p, p);    // **** TO-DO: P1 AND P1
+		    void *temp = UArray2_at(uarray2, j, i);
+//		    printf("hey we are before apply at [%i , %i]\n",i,j);
+                        apply(j, i, uarray2, temp, p);    // **** TO-DO: P1 AND P1
                 }
         }
 }
@@ -87,7 +101,9 @@ void UArray2_map_col_major(T uarray2,
 {
         for(int i = 0; i < uarray2 -> width; i++) {
                 for (int j = 0; j < uarray2 -> height; j++) {
-                        apply(i, j, uarray2, p, p);    // **** TO-DO: P1 AND P1
+//		    printf("hey we are before apply at [%i , %i]\n",i,j);
+		    void *temp = UArray2_at(uarray2, i, j);
+                        apply(i, j, uarray2, temp, p);    // **** TO-DO: P1 AND P1
                 }
         }
 }
