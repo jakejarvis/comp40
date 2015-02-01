@@ -18,11 +18,11 @@ extern int      UArray2_size    (T uarray2);
 extern void*     UArray2_at      (T uarray2, int i, int j);
 
 extern void     UArray2_map_row_major   (T uarray2, 
-                     void apply(int i, int j, UArray2_T a, void *p1, void *p2),
-                     void *p);
+                     void apply(int i, int j, UArray2_T a, void *local_cl, void *global_cl),
+                     void *global_cl);
 extern void     UArray2_map_col_major   (T uarray2, 
-                     void apply(int i, int j, UArray2_T a, void *p1, void *p2),
-                     void *p);
+                     void apply(int i, int j, UArray2_T a, void *local_cl, void *global_cl),
+                     void *global_cl);
 
 #undef T
 #endif

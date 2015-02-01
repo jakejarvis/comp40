@@ -53,11 +53,14 @@ T UArray2_new(int width, int height, int size)
 
 void UArray2_free(T *uarray2)
 {
-        for(int i = 0; i < UArray2_height(*uarray2); i++) {
-                UArray_free(UArray_at( ((*uarray2)->outer), i));
+        UArray_T outer = (*uarray2)->outer;
+        for(int i = 0; i < UArray2_width(*uarray2); i++) {
+                UArray_free(UArray_at(outer, i));
         }
 
-        UArray_free(&((*uarray2)->outer));
+        UArray_free(&outer);
+
+        FREE(*uarray2);
 }
 
 int UArray2_width(T uarray2)
@@ -83,27 +86,27 @@ void* UArray2_at(T uarray2, int i, int j)
 }
 
 void UArray2_map_row_major(T uarray2, 
-                     void apply(int i, int j, UArray2_T a, void *p1, void *p2),
-                     void *p)
+                     void apply(int i, int j, UArray2_T a, void *local_cl, void *global_cl),
+                     void *global_cl)
 {
         for(int i = 0; i < uarray2 -> height; i++) {
                 for (int j = 0; j < uarray2 -> width; j++) {
 		    void *temp = UArray2_at(uarray2, j, i);
 //		    printf("hey we are before apply at [%i , %i]\n",i,j);
-                        apply(j, i, uarray2, temp, p);    // **** TO-DO: P1 AND P1
+                        apply(j, i, uarray2, temp, global_cl);    // **** TO-DO: P1 AND P1
                 }
         }
 }
 
 void UArray2_map_col_major(T uarray2, 
-                     void apply(int i, int j, UArray2_T a, void *p1, void *p2),
-                     void *p)
+                     void apply(int i, int j, UArray2_T a, void *local_cl, void *global_cl),
+                     void *global_cl)
 {
         for(int i = 0; i < uarray2 -> width; i++) {
                 for (int j = 0; j < uarray2 -> height; j++) {
 //		    printf("hey we are before apply at [%i , %i]\n",i,j);
 		    void *temp = UArray2_at(uarray2, i, j);
-                        apply(i, j, uarray2, temp, p);    // **** TO-DO: P1 AND P1
+                        apply(i, j, uarray2, temp, global_cl);    // **** TO-DO: P1 AND P1
                 }
         }
 }

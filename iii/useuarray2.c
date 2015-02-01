@@ -58,13 +58,13 @@ main(int argc, char *argv[])
 
 
         /* Note: we are only setting a value on the corner of the array */
-    //    *((number *)UArray2_at(test_array, DIM1-1, DIM2-1)) = MARKER;
+        *((number *)UArray2_at(test_array, DIM1-1, DIM2-1)) = MARKER;
 
         printf("Trying column major\n");
-    //    UArray2_map_col_major(test_array, check_and_print, &OK);
+        UArray2_map_col_major(test_array, check_and_print, &OK);
 
         printf("Trying row major\n");
-      //  UArray2_map_row_major(test_array, check_and_print, &OK);
+        UArray2_map_row_major(test_array, check_and_print, &OK);
 
         UArray2_free(&test_array);
 
