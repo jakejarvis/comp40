@@ -100,6 +100,10 @@ do
       echo "skipping compile of useuaray2.c because uarray2.h does not exist"
       continue
   fi
+  if  [[ $cfile = usebit2.c ]] && [[ ! -f bit2.h ]]; then
+      echo "skipping compile of usebit2.c because bit2.h does not exist"
+      continue
+  fi
   $CC $FLAGS $CFLAGS -c $cfile
 done
 
@@ -130,6 +134,15 @@ case $link in
        linked=yes ;;
 esac
 
+case $link in
+  all|my_usebit2)  
+       if  [[ -f usebit2.o ]] && [[ -f bit2.o ]] ; then
+            $CC $FLAGS $LFLAGS -o my_usebit2 usebit2.o bit2.o $LIBS 
+       else
+            echo "skipping link of my_useuaray2 because bit2.o or usebit2.0 does not exist"
+       fi
+       linked=yes ;;
+esac
 
 # put out error msg if asked to link something we didn't recognize
 if [ $linked = no ]; then

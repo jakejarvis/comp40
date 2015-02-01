@@ -4,22 +4,24 @@
 
 #define T Bit2_T
 typedef struct T *T;
-/*
+
 extern T        Bit2_new    (int width, int height);
 
 extern void     Bit2_free   (T *bitmap);
 
-extern void     Bit2_put    (T bitmap, int i, int j, void *p);
-extern void    *Bit2_get    (T bitmap, int i, int j);
+extern int      Bit2_width  (T bitmap);
+extern int      Bit2_height (T bitmap);
+
+extern int     Bit2_put    (T bitmap, int i, int j, int bit);
+extern int Bit2_get    (T bitmap, int i, int j);
 
 extern void     Bit2_map_row_major  (T bitmap, 
-                           void apply(int i, int j, Bit2_T a, int b, void *p1),
-                           void *p);
+                           void apply(int i, int j, T bitmap, int bit, void *cl),
+                           void *cl);
 extern void     Bit2_map_col_major  (T bitmap, 
-                           void apply(int i, int j, Bit2_T a, int b, void *p1),
-                           void *p);
+                           void apply(int i, int j, T bitmap, int bit, void *cl),
+                           void *cl);
 
-Bit2_free
-*/
+
 #undef T
 #endif
