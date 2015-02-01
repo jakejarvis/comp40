@@ -10,7 +10,7 @@
 struct T {
         int width;
         int height;
-        UArray_T array;
+        UArray_T outer;
 };
 
 
@@ -21,44 +21,34 @@ T Bit2_new(int width, int height)
         assert(height > 0);
 
 
-
-        UArray_T array = UArray_new(width, sizeof(Bit_new(height)));
-/*
-        for(int i = 0; i < height; i++) {
-                for(int j = 0; j < width; j++) {
-                        Bit_T *bit = UArray2_at(array, i, j);
-                        bit = Bit_new(1);
-                }
-        }
-*/
-
+        UArray_T outer = UArray_new(width, sizeof(UArray_T));
 
         for(int i = 0; i < width; i++) {
-                Bit_T *bit = UArray_at(array, i);
-                *bit = Bit_new(height);
+		Bit_T bit = Bit_new(height);
+                Bit_T *bit_temp = UArray_at(outer, i);
+	    	*bit_temp = bit;
         }
-
-
 
         Bit2_T bitmap;
         NEW(bitmap);
 
         bitmap->width = width;
         bitmap->height = height;
-        bitmap->array = array;
+        bitmap->outer = outer;
 
         return bitmap;
 }
 
 void Bit2_free(T *bitmap)
 {
-        assert(bitmap);
-
-        UArray_free(&((*bitmap)->array));
-
-
-
-        FREE(*bitmap);
+        assert(bitmap != NULL);
+	assert(*bitmap != NULL);
+	for (int i=0; i < (*bitmap)->width; i++) {
+		Bit_T *bit_temp = UArray_at((*bitmap)->outer,i);
+		Bit_free(bit_temp);
+	}
+	UArray_free(&(*bitmap)->outer);
+	FREE(*bitmap);
 }
 
 int Bit2_width(T bitmap)
@@ -75,33 +65,34 @@ int Bit2_height(T bitmap)
 
 int Bit2_put(T bitmap, int i, int j, int bit)
 {
-        return Bit_put(UArray_at(bitmap->array, i), j, bit);
-
-
-     //   Bit_T *bit = UArray2_at(bitmap->array, i, j);
-//  *bit = p;
+    	assert(bitmap);
+    	assert(0 <= i && i < bitmap->width);
+	assert(0 <= j && j < bitmap->height);
+	UArray_T outer = bitmap->outer;
+	Bit_T *bit_temp = UArray_at(outer,i);
+        return Bit_put(*bit_temp, j, bit);
 }
 
 int Bit2_get(T bitmap, int i, int j)
 {
-        return Bit_get(UArray_at(bitmap->array, i), j);
-     //   Bit_T *bit = UArray2_at(bitmap->array, i, j);
-     //   return bit;
+	assert(bitmap);
+	assert(0 <= i && i < bitmap->width);
+	assert(0 <= j && j < bitmap->height);
+	UArray_T outer = bitmap->outer;
+	Bit_T *bit_temp = UArray_at(outer,i);
+        return Bit_get(*bit_temp, j);
 }
 
 void Bit2_map_row_major(T bitmap, 
                         void apply(int i, int j, T bitmap, int bit, void *cl),
                         void *cl)
 {
-//        return Array2_map_row_major()
-
         for(int i = 0; i < bitmap->height; i++) {
                 for(int j = 0; j < bitmap->width; j++) {
-                        apply(i, j, bitmap, Bit2_get(bitmap, i, j), cl);
+			int temp = Bit2_get(bitmap, j, i);
+                        apply(j, i, bitmap, temp, cl);
                 }
         }
-
-//                Bit_map(  UArray_at(bitmap->array, i), apply(i, bit, cl), cl  );
 }
 
 void Bit2_map_col_major(T bitmap, 
@@ -110,7 +101,8 @@ void Bit2_map_col_major(T bitmap,
 {
         for(int i = 0; i < bitmap->width; i++) {
                 for(int j = 0; j < bitmap->height; j++) {
-                        apply(i, j, bitmap, Bit2_get(bitmap, i, j), cl);
+			int temp = Bit2_get(bitmap, i, j);
+                        apply(i, j, bitmap, temp, cl);
                 }
         }
 }
