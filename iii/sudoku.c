@@ -139,16 +139,15 @@ void add_row(int row, int col, UArray2_T array, void *cl, void *sum)
                 if (*sum_temp != 45) {
                         UArray2_free(&array);
                         FREE(sum);
-                    printf("NOT CORRECT: ADD_ROW\n");
+
                         exit(1);      /* row doesn't add up to 45, puzzle 
                                        * is broken. */
                 } else {
                         /* row is valid, reset the sum for the next 
                          * iteration and continue. */
-                       *sum_temp = 0;
+                        *sum_temp = 0;
                         return;
                 }
-                FREE(sum_temp);
         }
 }
 
@@ -169,8 +168,7 @@ void add_col(int row, int col, UArray2_T array, void *cl, void *sum)
                 if (*sum_temp != 45) {
                         UArray2_free(&array);
                         FREE(sum);
-                        FREE(sum_temp);
-                    printf("NOT CORRECT: ADD_COL\n");
+
                         exit(1);      /* column doesn't add up to 45, puzzle 
                                        * is broken. */
                 } else {
@@ -209,7 +207,7 @@ void add_box(UArray2_T array, int *sum)
         if (*sum != 45) {
                 UArray2_free(&array);
                 FREE(sum);
-                    printf("NOT CORRECT: ADD_BOX\n");
+
                 exit(1);   /* box doesn't add up to 45, puzzle is broken. */
         } else {
                 *sum = 0;  /* box is valid, reset the sum for the next 
@@ -242,6 +240,7 @@ void check_row_duplicates(int row, int col, UArray2_T array, void *cl,
                         if (*temp == false) {
                                 UArray2_free(&array);
                                 FREE(tracker);
+
                                 exit(1);
                         }
                 }
@@ -277,6 +276,7 @@ void check_col_duplicates(int row, int col, UArray2_T array, void *cl,
                         if (*temp == false) {
                                 UArray2_free(&array);
                                 FREE(tracker);
+
                                 exit(1);
                         }
                 }
@@ -328,6 +328,7 @@ void check_box_duplicates(UArray2_T array, void *tracker)
                 if (*temp == false) {
                         UArray2_free(&array);
                         FREE(tracker);
+
                         exit(1);
                 }
         }        
