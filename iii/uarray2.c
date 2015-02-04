@@ -55,6 +55,8 @@ T UArray2_new(int width, int height, int size)
 
 void UArray2_free(T *uarray2)
 {
+        assert(uarray2 != NULL);
+
         UArray_T outer = (*uarray2)->outer;
         for (int i = 0; i < UArray2_width(*uarray2); i++) {
                 UArray_free(UArray_at(outer, i));
@@ -67,21 +69,31 @@ void UArray2_free(T *uarray2)
 
 int UArray2_width(T uarray2)
 {
+        assert(uarray2);
+
         return uarray2->width;
 }
 
 int UArray2_height(T uarray2)
 {
+        assert(uarray2);
+
         return uarray2->height;
 }
 
 int UArray2_size(T uarray2)
 {
+        assert(uarray2);
+
         return uarray2->size;
 }
 
 void* UArray2_at(T uarray2, int i, int j)
 {
+        assert(uarray2);
+        assert(i >= 0 && i < uarray2->width);
+        assert(j >= 0 && j < uarray2->height);
+
         UArray_T *inner_temp = UArray_at(uarray2->outer, i);
         return UArray_at(*inner_temp, j);
 }
@@ -91,6 +103,8 @@ void UArray2_map_row_major(T uarray2,
                                       void *local_cl, void *global_cl),
                            void *global_cl)
 {
+        assert(uarray2);
+
         for (int i = 0; i < uarray2 -> height; i++) {
                 for (int j = 0; j < uarray2 -> width; j++) {
                         void *temp = UArray2_at(uarray2, j, i);
@@ -104,6 +118,8 @@ void UArray2_map_col_major(T uarray2,
                                       void *local_cl, void *global_cl),
                            void *global_cl)
 {
+        assert(uarray2);
+
         for (int i = 0; i < uarray2 -> width; i++) {
                 for (int j = 0; j < uarray2 -> height; j++) {
                         void *temp = UArray2_at(uarray2, i, j);

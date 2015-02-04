@@ -64,12 +64,14 @@ void Bit2_free(T *bitmap)
 int Bit2_width(T bitmap)
 {
         assert(bitmap);
+
         return bitmap->width;
 }
 
 int Bit2_height(T bitmap)
 {
         assert(bitmap);
+
         return bitmap->height;
 }
 
@@ -78,6 +80,7 @@ int Bit2_put(T bitmap, int i, int j, int bit)
         assert(bitmap);
         assert(0 <= i && i < bitmap->width);
         assert(0 <= j && j < bitmap->height);
+        assert(bit == 0 || bit == 1);
 
         Bit_T *bit_temp = UArray_at(bitmap->outer, i);
 
@@ -99,6 +102,8 @@ void Bit2_map_row_major(T bitmap,
                         void apply(int i, int j, T bitmap, int bit, void *cl),
                         void *cl)
 {
+        assert(bitmap);
+
         for (int i = 0; i < bitmap->height; i++) {
                 for (int j = 0; j < bitmap->width; j++) {
                         int temp = Bit2_get(bitmap, j, i);
@@ -111,6 +116,8 @@ void Bit2_map_col_major(T bitmap,
                         void apply(int i, int j, T bitmap, int bit, void *cl),
                         void *cl)
 {
+        assert(bitmap);
+
         for (int i = 0; i < bitmap->width; i++) {
                 for (int j = 0; j < bitmap->height; j++) {
                         int temp = Bit2_get(bitmap, i, j);
