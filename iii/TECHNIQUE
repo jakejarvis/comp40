@@ -1,0 +1,23 @@
+Jake Jarvis (jjarvi01)
+Tam Luong   (tluong04)
+
+COMP 40 
+Homework 2
+2/3/15
+
+TECHNIQUE
+
+---------------
+
+From the beginning to end of this assignment, we consistently used paper to 
+draw out each concept we were envisioning. This proved to be the most effective
+method of communication between two people doing pair programming.
+
+While we drew diagrams out, we always tried to break the bigger problems of the
+assignment down to smaller concepts in the world of ideas. For example, before 
+adding any code to our unblackedges file, we always drew out a small bitmap on 
+paper and emulated our code line-by-line as we iterate through the image. For 
+Sudoku, we drew out correct/incorrect puzzles and, on paper, iterated through
+each row, column, and box finding sums and duplicate numbers. After deciding on
+an algorithm verbally, only then did we turn to the computer to start writing
+our code.

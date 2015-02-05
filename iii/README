@@ -5,6 +5,36 @@ COMP 40
 Homework 2
 2/3/15
 
-We believe we have correctly implemented UArray2 and Bit2
+README
+
+---------------
+
+We believe we have correctly implemented UArray2 and Bit2. Subsequently, sudoku
+and unblackedges correctly utilize these structures. 
+
+UArray2 correctly implements a 2-dimensional UArray, and adjusts each function 
+to account for a width and a height, instead of simply a length. Similarly, the
+Bit2 object accounts for a 2-dimensional bitmap with a width and a height, 
+instead of one bit with a fixed size.
+
+my_useuarray2 and my_usebit2 execute correctly, as do our test cases.
+
+We utilized UArray2 to create a Sudoku puzzle verification tool that takes in a
+completed Sudoku puzzle and checks whether it is correctly completed or not. We
+use the UArray2 to store the puzzle after we read it in from an image file. As
+a quick first pass, we check if the sum of the numbers in each row, column, and
+box is equal to 45 (1+2+3+4+5+6+7+8+9). This is an extremely fast way of 
+eliminating invalid solutions -- however, it does not catch all of them. We 
+also need to check if each number (from 1 to 9) exists in each row, column, and
+box. We use a one-dimensional UArray of nine booleans to check the existance of
+each digit. After the last number of each row, column, and box, we check that
+array to make sure all nine elements are true. If we find one false value, we
+exit the program immediately (with status code 1).
+
+Similarly, we utilized our Bit2 implementation to create a program that detects
+and removes black edges from an image file. We use a Stack to iterate through 
+every pixel as well as the neighboring pixels (up, down, left, right -- not 
+diagonal) to follow the "mazes" of black edges and change them to white in the 
+final bitmap. 
 
 We have spent approximately 20 hours on this project.
