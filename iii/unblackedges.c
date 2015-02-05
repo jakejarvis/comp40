@@ -13,7 +13,7 @@ struct coordinates {
 
 extern Bit2_T pbmread(FILE *fp);
 extern void pbmwrite(FILE *fp, Bit2_T bitmap);
-extern Bit2_T process_bitmap(Bit2_T bitmap);
+extern void process_bitmap(Bit2_T bitmap);
 extern void print_to_stdout(int i, int j, Bit2_T a, int b, void *p1);
 extern bool isBlackedge(Bit2_T orginal, Bit2_T blackedges, struct coordinates c);
 
@@ -28,11 +28,11 @@ int main(int argc, char *argv[])
 //		Bit2_T *new_bitmap;
 //		NEW(new_bitmap);
 //		new_bitmap = process_bitmap(bitmap);
-		Bit2_T new_bitmap = process_bitmap(bitmap);
+		process_bitmap(bitmap);
 //		(void) new_bitmap;
 //		printf("processed\n");
 		pbmwrite(stdout, bitmap);
-		pbmwrite(stdout, new_bitmap);
+//		pbmwrite(stdout, new_bitmap);
 //		Bit2_free(new_bitmap);
 		Bit2_free(&bitmap);
         } else if (argc == 2) {     /* one filename, use it */
@@ -47,14 +47,14 @@ int main(int argc, char *argv[])
                         bitmap = pbmread(fp);
 //			printf("original\n");
 //                        pbmwrite(stdout, bitmap);
-			Bit2_T new_bitmap = process_bitmap(bitmap);
+			process_bitmap(bitmap);
 //			Bit2_T *new_bitmap;
 //			NEW(new_bitmap);
 //			new_bitmap = process_bitmap(bitmap);
 //			(void) new_bitmap;
 //			printf("processed\n");
 			pbmwrite(stdout, bitmap);
-			pbmwrite(stdout, new_bitmap);
+//			pbmwrite(stdout, new_bitmap);
 //			Bit2_free(new_bitmap);
 			Bit2_free(&bitmap);
                         fclose(fp);
@@ -109,18 +109,18 @@ void pbmwrite(FILE *fp, Bit2_T bitmap) {
         
 }
 
-extern Bit2_T process_bitmap(Bit2_T bitmap) {
+extern void process_bitmap(Bit2_T bitmap) {
         (void) bitmap;
 	int width = Bit2_width(bitmap);
 	int height = Bit2_height(bitmap);
-	Bit2_T temp = bitmap;
+//	Bit2_T temp = bitmap;
 	Bit2_T blackedges = Bit2_new(width, height);
 	for (int i=0; i<width; i++) {
 		for (int j=0; j<height; j++) {
 			if ( (i==0)||(j==0)||(i==width-1)||(j=height-1) ) {
 				if (Bit2_get(bitmap,i,j) == 1) {
 					Bit2_put(blackedges,i,j,1);
-					Bit2_put(temp,i,j,0);
+					Bit2_put(bitmap,i,j,0);
 				} else
 					Bit2_put(blackedges,i,j,0);
 			}
@@ -134,32 +134,74 @@ extern Bit2_T process_bitmap(Bit2_T bitmap) {
 				coord.x = i; coord.y = j;
 				Stack_push(s, &coord);
 				while (Stack_empty(s)==0) {
+//					printf("hey stack is not empty\n");
 					struct coordinates *p_coord;
 					p_coord = Stack_pop(s);
+					
+					
 					int x = p_coord->x;
 					int y = p_coord->y;
-					if (isBlackedge(bitmap,blackedges,*p_coord)) {
-						Bit2_put(temp,x,y,0);
+					
+					struct coordinates coord;
+					coord.x = x;
+					coord.y = y;
+					
+					
+//					free(p_coord);
+					
+//					printf("we are at [%i, %i]\n",x,y);
+					if (isBlackedge(bitmap,blackedges,coord)) {
+						struct coordinates *right, *left,
+						*up, *down;
+						right = calloc(1, sizeof(struct coordinates));
+						left = calloc(1, sizeof(struct coordinates));
+						up = calloc(1, sizeof(struct coordinates));
+						down = calloc(1, sizeof(struct coordinates));
+						right->x = x+1;
+						right->y = y;
+						left->x = x-1;
+						left->y = y;
+						up->x = x;
+						up->y = y-1;
+						down->x = x;
+						down->y = y+1;
+//						printf("we are at [%i, %i]\n",x,y);
+						Bit2_put(bitmap,x,y,0);
 						Bit2_put(blackedges,x,y,1);
-						struct coordinates right, left,
-						up, down;
-						right.x = x+1;
-						right.y = y;
-						left.x = x-1;
-						left.y = y;
-						up.x = x;
-						up.y = y-1;
-						down.x = x;
-						down.y = y+1;
-						if ( (Bit2_get(blackedges,right.x,right.y)==0) && (Bit2_get(bitmap,right.x,right.y)==1) )
-							Stack_push(s, &right);
-						if ( (Bit2_get(blackedges,left.x,left.y)==0) && (Bit2_get(bitmap,left.x,left.y)==1) )
-							Stack_push(s, &left);
-						if ( (Bit2_get(blackedges,up.x,up.y)==0) && (Bit2_get(bitmap,up.x,up.y)==1) )
-							Stack_push(s, &up);
-						if ( (Bit2_get(blackedges,down.x,down.y)==0) && (Bit2_get(bitmap,down.x,down.y)==1) )
-							Stack_push(s, &down);
+						if ( (Bit2_get(blackedges,right->x,right->y)==0) && (Bit2_get(bitmap,right->x,right->y)==1) ) {
+//							printf("right! [%i, %i]\n",right->x,right->y);
+//							struct coordinates *p_right = &right;
+							Stack_push(s, right);
+						} else {
+							FREE(right);
+						}
+						if ( (Bit2_get(blackedges,left->x,left->y)==0) && (Bit2_get(bitmap,left->x,left->y)==1) ) {
+//							printf("left! [%i, %i]\n",left->x,left->y);
+//							struct coordinates *p_left = &left;
+							Stack_push(s, left);
+						} else {
+							FREE(left);
+						}
+						if ( (Bit2_get(blackedges,up->x,up->y)==0) && (Bit2_get(bitmap,up->x,up->y)==1) ) {
+//							printf("up! [%i, %i]\n",up->x,up->y);
+//							struct coordinates *p_up = &up;
+							Stack_push(s, up);
+						} else {
+							FREE(up);
+						}
+						if ( (Bit2_get(blackedges,down->x,down->y)==0) && (Bit2_get(bitmap,down->x,down->y)==1) ) {
+//							printf("down! [%i, %i]\n",down->x,down->y);
+//							struct coordinates *p_down = &down;
+							Stack_push(s, down);
+						} else {
+							FREE(down);
+						}
 					}
+//					FREE(p_coord);
+//					FREE(right);
+//					FREE(left);
+//					FREE(up);
+//					FREE(down);
 				}
 				Stack_free(&s);
 			}
@@ -180,7 +222,7 @@ extern Bit2_T process_bitmap(Bit2_T bitmap) {
 	
 	
 	Bit2_free(&blackedges);
-        return temp;
+//        return temp;
 
 }
 
