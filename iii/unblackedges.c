@@ -4,6 +4,7 @@
 #include <bit2.h>
 #include <stdbool.h>
 #include <stack.h>
+#include <mem.h>
 
 struct coordinates {
 	int x;
@@ -24,10 +25,16 @@ int main(int argc, char *argv[])
                 bitmap = pbmread(stdin);
 //		printf("original\n");
 //                pbmwrite(stdout, bitmap);
+//		Bit2_T *new_bitmap;
+//		NEW(new_bitmap);
+//		new_bitmap = process_bitmap(bitmap);
 		Bit2_T new_bitmap = process_bitmap(bitmap);
-		(void) new_bitmap;
+//		(void) new_bitmap;
 //		printf("processed\n");
+		pbmwrite(stdout, bitmap);
 		pbmwrite(stdout, new_bitmap);
+//		Bit2_free(new_bitmap);
+		Bit2_free(&bitmap);
         } else if (argc == 2) {     /* one filename, use it */
                 FILE *fp = fopen(argv[1], "r");
                 
@@ -41,18 +48,22 @@ int main(int argc, char *argv[])
 //			printf("original\n");
 //                        pbmwrite(stdout, bitmap);
 			Bit2_T new_bitmap = process_bitmap(bitmap);
-			(void) new_bitmap;
+//			Bit2_T *new_bitmap;
+//			NEW(new_bitmap);
+//			new_bitmap = process_bitmap(bitmap);
+//			(void) new_bitmap;
 //			printf("processed\n");
+			pbmwrite(stdout, bitmap);
 			pbmwrite(stdout, new_bitmap);
+//			Bit2_free(new_bitmap);
+			Bit2_free(&bitmap);
                         fclose(fp);
                 }
         } else {    /* more than one filename, abort */
                 fprintf(stderr,
                         "ERROR: Please only give one filename at a time.\n");
         }
-        
-        
-        
+	
         return 0;
 }
 
@@ -72,6 +83,7 @@ extern Bit2_T pbmread(FILE *fp)
                         Bit2_put(temp,j,i,pixel);
                 }
 //        printf("hey input finishes\n");
+	Pnmrdr_free(&image);
         return temp;
 }
 
@@ -149,6 +161,7 @@ extern Bit2_T process_bitmap(Bit2_T bitmap) {
 							Stack_push(s, &down);
 					}
 				}
+				Stack_free(&s);
 			}
 		}
 	}
@@ -166,7 +179,7 @@ extern Bit2_T process_bitmap(Bit2_T bitmap) {
 	
 	
 	
-	
+	Bit2_free(&blackedges);
         return temp;
 
 }
