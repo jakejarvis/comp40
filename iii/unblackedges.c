@@ -1,3 +1,15 @@
+/*
+ *   unblackedges.c
+ *
+ *   Jake Jarvis (jjarvi01)
+ *   Tam Luong   (tluong04)
+ *
+ *   COMP 40
+ *   Homework 2
+ *   2/3/15
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pnmrdr.h>
@@ -12,11 +24,16 @@ struct coordinates {
 };
 
 extern Bit2_T pbmread(FILE *fp);
-extern void pbmwrite(FILE *fp, Bit2_T bitmap);
+extern void pbmwrite(Bit2_T bitmap);
 extern void process_bitmap(Bit2_T bitmap);
-extern void print_to_stdout(int i, int j, Bit2_T a, int b, void *p1);
-extern bool isBlackedge(Bit2_T orginal, Bit2_T blackedges, struct coordinates c);
-
+extern void print_to_stdout(int i, 
+                            int j, 
+                            Bit2_T a, 
+                            int b, 
+                            void *p1);
+extern bool isBlackedge(Bit2_T orginal, 
+                        Bit2_T blackedges, 
+                        struct coordinates c);
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +41,7 @@ int main(int argc, char *argv[])
         if(argc == 1) {    /* no filename, use stdin */
                 bitmap = pbmread(stdin);
 		process_bitmap(bitmap);
-		pbmwrite(stdout, bitmap);
+		pbmwrite(bitmap);
 		Bit2_free(&bitmap);
         } else if (argc == 2) {     /* one filename, use it */
                 FILE *fp = fopen(argv[1], "r");
@@ -36,7 +53,7 @@ int main(int argc, char *argv[])
                 } else {
                         bitmap = pbmread(fp);
 			process_bitmap(bitmap);
-			pbmwrite(stdout, bitmap);
+			pbmwrite(bitmap);
 			Bit2_free(&bitmap);
                         fclose(fp);
                 }
@@ -48,26 +65,36 @@ int main(int argc, char *argv[])
         return 0;
 }
 
+/* Accepts data from a file or stdin and transfers it to a Bit2 bitmap */
 extern Bit2_T pbmread(FILE *fp)
 {
         Pnmrdr_T image = Pnmrdr_new(fp);
         Pnmrdr_mapdata map = Pnmrdr_data(image);
         Bit2_T temp = Bit2_new(map.width, map.height);
 
-	printf("P1\n"); /* print bitmap type - always P1 */
-        printf("%u ",map.width);    /* print width + whitespace + height */
-        printf("%u\n",map.height);
-        for (unsigned int i=0; i<map.height; i++) {
-                for (unsigned int j=0; j<map.width; j++) {
+        for (unsigned int i = 0; i < map.height; i++) {
+                for (unsigned int j = 0; j < map.width; j++) {
                         int pixel = Pnmrdr_get(image);
-                        Bit2_put(temp,j,i,pixel);
+                        Bit2_put(temp, j, i, pixel);
                 }
         }
 	Pnmrdr_free(&image);
         return temp;
 }
 
-void print_to_stdout(int i, int j, Bit2_T a, int b, void *p1){
+/* Iterates through the bitmap row-by-row and outputs to stdout */
+void pbmwrite(Bit2_T bitmap) 
+{
+        printf("P1\n"); /* print bitmap type - always P1 */
+        printf("%u ", Bit2_width(bitmap));    /* print width + whitespace + height */
+        printf("%u\n", Bit2_height(bitmap));
+
+        Bit2_map_row_major(bitmap, print_to_stdout, NULL);        
+}
+
+/* Prints the bitmap to stdout */
+void print_to_stdout(int i, int j, Bit2_T a, int b, void *p1)
+{
         (void)b;
         (void)p1;
 
@@ -77,13 +104,9 @@ void print_to_stdout(int i, int j, Bit2_T a, int b, void *p1){
 	}
 }
 
-void pbmwrite(FILE *fp, Bit2_T bitmap) {
-        (void)fp;
-
-        Bit2_map_row_major(bitmap, print_to_stdout, NULL);        
-}
-
-extern void process_bitmap(Bit2_T bitmap) {
+/* Scans the bitmap and detects and replaces black edges */
+extern void process_bitmap(Bit2_T bitmap) 
+{
         (void) bitmap;
 	int width = Bit2_width(bitmap);
 	int height = Bit2_height(bitmap);
@@ -195,6 +218,7 @@ extern void process_bitmap(Bit2_T bitmap) {
 	Bit2_free(&blackedges);
 }
 
+/* Determines whether a pixel is a black edge according to surrounding pixels */
 extern bool isBlackedge(Bit2_T original, 
                         Bit2_T blackedges, 
                         struct coordinates c) 
